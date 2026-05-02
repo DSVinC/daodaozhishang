@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="scene-ghost" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#160F0C"/>
+      <stop offset="100%" stop-color="#281A15"/>
+    </linearGradient>
+    <linearGradient id="mist-ghost" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D6ECE7" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#5D827E" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#scene-ghost)"/>
+  <rect x="34" y="34" width="1532" height="832" rx="36" fill="none" stroke="#D6ECE7" stroke-opacity="0.38" stroke-width="4"/>
+  <ellipse cx="1110" cy="184" rx="280" ry="160" fill="url(#mist-ghost)"/>
+  <rect x="100" y="124" width="630" height="170" rx="30" fill="#111111" fill-opacity="0.2"/>
+  <text x="140" y="212" fill="#F7EFDF" font-size="84" font-family="Microsoft YaHei" font-weight="700">鬼神领域</text>
+  <text x="142" y="278" fill="#D6ECE7" font-size="34" font-family="Microsoft YaHei">瓷白、青绿、破裂纹理</text>
+  <path d="M208 210c66 18 112 72 144 126 42 72 98 110 196 114" fill="none" stroke="#5D827E" stroke-width="18" stroke-linecap="round"/>
+         <path d="M160 474c50-92 140-136 240-136 130 0 212 70 286 164" fill="none" stroke="#FFFFFF" stroke-opacity="0.72" stroke-width="12" stroke-dasharray="12 20"/>
+         <path d="M264 238l88 106M478 218l72 94M614 288l92 110" stroke="#5D827E" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round"/>
+  <rect x="0" y="676" width="1600" height="224" fill="#120C0A" fill-opacity="0.62"/>
+</svg>

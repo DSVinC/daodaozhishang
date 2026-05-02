@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大道之上 · 民俗恐怖卡牌原型</title>
+  <style>
+    :root {
+      --bg: #130d0b;
+      --bg-soft: #201512;
+      --panel: rgba(29, 18, 14, 0.94);
+      --panel-soft: rgba(54, 36, 29, 0.92);
+      --border: rgba(227, 197, 147, 0.28);
+      --border-strong: rgba(227, 197, 147, 0.5);
+      --text: #f7efdf;
+      --muted: #c3ac8d;
+      --accent: #a44c2a;
+      --accent-soft: #db9c75;
+      --warning: #c13d2e;
+      --safe: #7ab08a;
+      --ghost: #b4d9d3;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: "Microsoft YaHei", sans-serif; }
+    body {
+      background:
+        radial-gradient(circle at top, rgba(164, 76, 42, 0.28), transparent 32%),
+        radial-gradient(circle at 80% 12%, rgba(180, 217, 211, 0.12), transparent 16%),
+        linear-gradient(180deg, #1a1210 0%, #130d0b 100%);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(circle at center, black 36%, transparent 88%);
+      opacity: 0.35;
+    }
+    .shell {
+      width: min(1380px, calc(100% - 24px));
+      margin: 18px auto 24px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 16px;
+    }
+    .panel, .titlebar, .overlay-card, .log-panel {
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      background: linear-gradient(180deg, rgba(39, 27, 21, 0.95), rgba(18, 12, 9, 0.97));
+      backdrop-filter: blur(10px);
+    }
+    .titlebar {
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .titlebar h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      letter-spacing: 0.18em;
+      color: #f9e9c8;
+    }
+    .titlebar p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 680px;
+      line-height: 1.55;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(227, 197, 147, 0.25);
+      background: rgba(227, 197, 147, 0.08);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 328px;
+      gap: 16px;
+      min-height: 0;
+    }
+    .panel {
+      padding: 18px;
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 1.12rem;
+      color: #f7dfb2;
+      letter-spacing: 0.08em;
+    }
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .stat-card, .rule-card, .choice-card, .enemy-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(227, 197, 147, 0.18);
+      background: linear-gradient(180deg, rgba(60, 42, 31, 0.82), rgba(26, 18, 13, 0.95));
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.18rem;
+      font-weight: 700;
+    }
+    .blood-moon {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(193, 61, 46, 0.28);
+      background: rgba(193, 61, 46, 0.1);
+    }
+    .moon {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #f3c2a2, #a44c2a 58%, #561d16 100%);
+      box-shadow: 0 0 24px rgba(164, 76, 42, 0.4);
+      flex-shrink: 0;
+    }
+    .center-panel {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+    .phase-banner {
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(227, 197, 147, 0.18);
+      background:
+        radial-gradient(circle at center, rgba(227, 197, 147, 0.08), transparent 48%),
+        linear-gradient(180deg, rgba(47, 33, 26, 0.95), rgba(22, 15, 11, 0.98));
+      text-align: center;
+    }
+    .phase-banner strong {
+      display: block;
+      font-size: 1.45rem;
+      letter-spacing: 0.12em;
+      color: #f7dfb2;
+      margin-bottom: 8px;
+    }
+    .phase-banner span {
+      color: var(--muted);
+    }
+    .stage-map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .stage-node {
+      position: relative;
+      padding: 14px 14px 16px;
+      min-height: 140px;
+      border-radius: 18px;
+      border: 1px solid rgba(227, 197, 147, 0.16);
+      background: linear-gradient(180deg, rgba(65, 46, 34, 0.82), rgba(24, 17, 12, 0.95));
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .stage-node:hover {
+      transform: translateY(-2px);
+      border-color: rgba(227, 197, 147, 0.42);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.22);
+    }
+    .stage-node.active {
+      border-color: rgba(180, 217, 211, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(180, 217, 211, 0.32);
+    }
+    .stage-thumb {
+      width: 100%;
+      height: 86px;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      border: 1px solid rgba(227, 197, 147, 0.14);
+      background: rgba(0, 0, 0, 0.18);
+    }
+    .stage-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.92) contrast(1.02);
+    }
+    .stage-node.done::after {
+      content: "已穿过";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.78rem;
+      color: var(--safe);
+    }
+    .node-title {
+      font-size: 1.05rem;
+      color: #f8e4be;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .node-rule {
+      font-size: 0.84rem;
+      color: var(--ghost);
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+    .node-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    .event-panel {
+      min-height: 360px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(227, 197, 147, 0.16);
+      background:
+        radial-gradient(circle at top right, rgba(180, 217, 211, 0.07), transparent 22%),
+        linear-gradient(180deg, rgba(46, 33, 25, 0.95), rgba(15, 10, 8, 0.98));
+    }
+    .visual-stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 232px;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .scene-frame, .portrait-card, .battle-tableau {
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(227, 197, 147, 0.16);
+      background: linear-gradient(180deg, rgba(60, 42, 31, 0.82), rgba(26, 18, 13, 0.95));
+    }
+    .scene-frame {
+      position: relative;
+      min-height: 286px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .scene-art {
+      width: 100%;
+      height: 100%;
+      min-height: 286px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.9) contrast(1.04);
+    }
+    .scene-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(6, 5, 5, 0.12), rgba(6, 5, 5, 0.75)),
+        radial-gradient(circle at 76% 20%, rgba(255,255,255,0.12), transparent 26%);
+      pointer-events: none;
+    }
+    .scene-labels {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+    }
+    .scene-tag {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(227, 197, 147, 0.22);
+      color: var(--ghost);
+      font-size: 0.82rem;
+    }
+    .scene-focus {
+      text-align: right;
+    }
+    .scene-focus strong {
+      display: block;
+      color: #f8e4be;
+      font-size: 1.18rem;
+      letter-spacing: 0.05em;
+    }
+    .scene-focus span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .portrait-strip {
+      display: grid;
+      gap: 12px;
+    }
+    .portrait-card {
+      padding: 10px;
+    }
+    .portrait-card img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      border-radius: 16px;
+      display: block;
+      border: 1px solid rgba(227, 197, 147, 0.14);
+      margin-bottom: 10px;
+      background: rgba(0, 0, 0, 0.28);
+    }
+    .portrait-card strong {
+      display: block;
+      color: #f8e4be;
+      font-size: 0.96rem;
+      margin-bottom: 4px;
+    }
+    .portrait-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+    .event-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .event-head h3 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+      color: #f9e9c8;
+    }
+    .event-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.68;
+      white-space: pre-line;
+    }
+    .observer {
+      min-width: 200px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(11, 11, 11, 0.48);
+      border: 1px solid rgba(180, 217, 211, 0.18);
+    }
+    .observer strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ghost);
+    }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .choice-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 158px;
+    }
+    .choice-card h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #f9e9c8;
+    }
+    .choice-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.9rem;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: var(--ghost);
+      margin-top: auto;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--bg);
+      background: linear-gradient(180deg, #efd6a9, #d6b27d);
+      transition: transform 0.16s ease, filter 0.16s ease;
+    }
+    button:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    button.secondary {
+      background: linear-gradient(180deg, #d9e9e4, #b4d9d3);
+      color: #11231d;
+    }
+    button.danger {
+      background: linear-gradient(180deg, #e3a18f, #c13d2e);
+      color: #fff9f7;
+    }
+    button.ghost {
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid rgba(227, 197, 147, 0.16);
+    }
+    .battle-panel {
+      display: none;
+      grid-template-columns: minmax(0, 1fr) 230px;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .battle-panel.active { display: grid; }
+    .battle-main, .battle-side {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(227, 197, 147, 0.18);
+      background: linear-gradient(180deg, rgba(43, 30, 24, 0.94), rgba(17, 11, 9, 0.98));
+    }
+    .enemy-card {
+      margin-bottom: 14px;
+    }
+    .battle-tableau {
+      position: relative;
+      min-height: 210px;
+      margin-bottom: 14px;
+    }
+    .battle-scene-art {
+      width: 100%;
+      height: 100%;
+      min-height: 210px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.94);
+    }
+    .combatants {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px 0;
+      background: linear-gradient(180deg, rgba(10,10,10,0.08), rgba(10,10,10,0.68));
+    }
+    .combatant {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .combatant img {
+      width: 116px;
+      height: 154px;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid rgba(227, 197, 147, 0.18);
+      box-shadow: 0 18px 32px rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.22);
+    }
+    .combatant span {
+      font-size: 0.8rem;
+      color: var(--ghost);
+      letter-spacing: 0.08em;
+    }
+    .battle-log {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.9rem;
+      max-height: 188px;
+      overflow: auto;
+    }
+    .hand {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .card {
+      min-height: 180px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(227, 197, 147, 0.18);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, rgba(66, 47, 38, 0.95), rgba(24, 17, 13, 0.97));
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #f9e9c8;
+    }
+    .card-type {
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      background: rgba(227, 197, 147, 0.12);
+      color: var(--ghost);
+    }
+    .card-body {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .meter {
+      width: 100%;
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(227, 197, 147, 0.12);
+    }
+    .meter-fill {
+      height: 100%;
+      width: 0;
+      transition: width 0.25s ease;
+      background: linear-gradient(90deg, #8a3320, #d38157, #f4cf9c);
+    }
+    .meter-fill.safe {
+      background: linear-gradient(90deg, #406550, #7ab08a, #cce8d4);
+    }
+    .sidebar-list {
+      display: grid;
+      gap: 12px;
+    }
+    .tag {
+      display: inline-flex;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--ghost);
+      font-size: 0.76rem;
+      margin-right: 6px;
+      margin-bottom: 8px;
+    }
+    .log-panel {
+      padding: 16px 18px;
+    }
+    .log-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.02rem;
+      color: #f7dfb2;
+      letter-spacing: 0.08em;
+    }
+    .story-log {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.7;
+      color: var(--muted);
+      max-height: 170px;
+      overflow: auto;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(5, 5, 6, 0.72);
+      padding: 16px;
+      z-index: 10;
+    }
+    .overlay.active { display: grid; }
+    .overlay-card {
+      width: min(740px, 100%);
+      padding: 24px;
+    }
+    .overlay-card h2 {
+      margin: 0 0 12px;
+      font-size: 1.58rem;
+      color: #f9e9c8;
+    }
+    .overlay-card p {
+      color: var(--muted);
+      line-height: 1.75;
+      white-space: pre-line;
+    }
+    .overlay-card .actions {
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    .sr-note {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+    }
+    @media (max-width: 1180px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .battle-panel {
+        grid-template-columns: 1fr;
+      }
+      .visual-stage {
+        grid-template-columns: 1fr;
+      }
+      .portrait-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .stage-map, .choice-grid, .hand {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="titlebar">
+      <div>
+        <h1>大道之上</h1>
+        <p>在一个逐渐崩坏的乡土世界里，活下去、理解规则、决定你愿意牺牲谁。MVP 先做三段体验：黄坡村、鬼神领域、药缸房。</p>
+      </div>
+      <div class="badge-row">
+        <div class="badge">Roguelike 卡牌</div>
+        <div class="badge">民俗恐怖</div>
+        <div class="badge">规则变化</div>
+        <div class="badge">黑锅在看你</div>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section class="panel">
+        <h2>陈实状态</h2>
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="blood-moon">
+          <div class="moon"></div>
+          <div>
+            <strong>血月压迫</strong>
+            <div id="moon-text" class="stat-label">夜还没完全落下，但它已经在天顶开了口子。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="center-panel">
+        <div class="phase-banner">
+          <strong id="phase-name">黄坡村</strong>
+          <span id="phase-note">先学会相信自己的眼睛，再学会怀疑自己的眼睛。</span>
+        </div>
+
+        <div class="stage-map" id="stage-map"></div>
+
+        <section class="event-panel">
+          <div class="visual-stage">
+            <div class="scene-frame">
+              <img id="scene-art" class="scene-art" src="assets/generated/scene-village.webp" data-fallback-src="assets/generated/scene-village.png" alt="场景图" />
+              <div class="scene-vignette"></div>
+              <div class="scene-labels">
+                <span id="scene-tag" class="scene-tag">MVP 场景</span>
+                <div class="scene-focus">
+                  <strong id="scene-focus-name">黄坡村</strong>
+                  <span id="scene-focus-role">场景压迫正在建立</span>
+                </div>
+              </div>
+            </div>
+            <div class="portrait-strip">
+              <article class="portrait-card">
+                <img id="hero-art" src="assets/generated/portrait-chenshi.webp" data-fallback-src="assets/generated/portrait-chenshi.png" alt="陈实" />
+                <strong>陈实</strong>
+                <span>玩家视角。先观察，再决定信谁。</span>
+              </article>
+              <article class="portrait-card">
+                <img id="threat-art" src="assets/generated/portrait-yeye.webp" data-fallback-src="assets/generated/portrait-yeye.png" alt="当前威胁" />
+                <strong id="threat-name">陈寅都</strong>
+                <span id="threat-role">当前压力来源</span>
+              </article>
+              <article class="portrait-card">
+                <img id="dog-art" src="assets/generated/portrait-heiguo.webp" data-fallback-src="assets/generated/portrait-heiguo.png" alt="黑锅" />
+                <strong>黑锅</strong>
+                <span id="dog-focus">观察者，不直接帮你，但会泄露规则边缘。</span>
+              </article>
+            </div>
+          </div>
+
+          <div class="event-head">
+            <div>
+              <h3 id="event-title">开局：灶房前的火</h3>
+              <p id="event-copy" class="event-copy"></p>
+            </div>
+            <aside class="observer">
+              <strong>黑锅观察</strong>
+              <div id="dog-note" class="event-copy"></div>
+            </aside>
+          </div>
+
+          <div id="choice-grid" class="choice-grid"></div>
+
+          <section id="battle-panel" class="battle-panel">
+            <div class="battle-main">
+              <div class="battle-tableau">
+                <img id="battle-scene-art" class="battle-scene-art" src="assets/generated/scene-village.webp" data-fallback-src="assets/generated/scene-village.png" alt="战斗场景" />
+                <div class="combatants">
+                  <div class="combatant">
+                    <img id="battle-hero-art" src="assets/generated/portrait-chenshi.webp" data-fallback-src="assets/generated/portrait-chenshi.png" alt="陈实战斗立绘" />
+                    <span>陈实</span>
+                  </div>
+                  <div class="combatant">
+                    <img id="battle-enemy-art" src="assets/generated/portrait-ziyi.webp" data-fallback-src="assets/generated/portrait-ziyi.png" alt="敌人立绘" />
+                    <span id="battle-enemy-label">紫衣女子</span>
+                  </div>
+                </div>
+              </div>
+              <div class="enemy-card">
+                <div class="stat-label">当前对手</div>
+                <div class="stat-value" id="enemy-name">紫衣女子</div>
+                <div class="meter" aria-hidden="true"><div class="meter-fill" id="enemy-hp-fill"></div></div>
+                <div class="card-body" id="enemy-rule"></div>
+              </div>
+              <div class="stat-label">手牌</div>
+              <div class="hand" id="hand"></div>
+            </div>
+            <div class="battle-side">
+              <div class="stat-card">
+                <div class="stat-label">回合 / 行动力</div>
+                <div class="stat-value" id="battle-turn">1 / 3</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">敌意</div>
+                <div class="meter"><div class="meter-fill" id="threat-fill"></div></div>
+                <div class="meta" id="threat-text">敌意低，你还有余地。</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">战斗记录</div>
+                <ol class="battle-log" id="battle-log"></ol>
+              </div>
+              <div class="actions">
+                <button class="ghost" id="end-turn-btn">结束回合</button>
+                <button class="secondary" id="draw-btn">抽 1 张</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="actions">
+            <button id="continue-btn">推进剧情</button>
+            <button class="secondary" id="restart-btn">重新开局</button>
+            <button class="ghost" id="asset-btn">查看 PPT 资产说明</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="panel">
+        <h2>规则裂缝</h2>
+        <div class="sidebar-list" id="rule-list"></div>
+        <h2 style="margin-top:22px;">牌组概览</h2>
+        <div id="deck-summary"></div>
+      </aside>
+    </main>
+
+    <section class="log-panel">
+      <h2>剧情日志</h2>
+      <ol id="story-log" class="story-log"></ol>
+    </section>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-card">
+      <h2 id="overlay-title"></h2>
+      <p id="overlay-copy"></p>
+      <div class="actions">
+        <button id="overlay-close">继续</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sr-note" id="render-root" aria-hidden="true"></div>
+
+  <script>
+    const stageDefs = [
+      {
+        id: "village",
+        name: "黄坡村",
+        note: "爷爷不像人，村民不敢抬头。",
+        rule: "观察力强化，但每次直视异常都会涨 1 点惊惧。",
+        desc: "探索与对话，建立‘世界不对劲’的第一印象。",
+        dog: "黑锅没叫，它只是蹲在灶前，像在替谁数火候。",
+        event: "傍晚的黄坡村静得像一口没出声的井。爷爷在灶房里嚼蜡，村民避着你走。你一抬眼，就发现每个人都在假装一切正常。",
+        choices: [
+          { id: "observe", title: "观察爷爷", body: "强行辨认他哪里不像人。获得 1 层‘明察’，但惊惧 +1。", type: "event", effect: { insight: 1, dread: 1 }, log: "你盯着爷爷的嘴角，闻到一股蜡与灰的甜味。" },
+          { id: "ask", title: "问村民", body: "向村口老人追问。名声 -1，获得 1 张【旁敲侧击】。", type: "event", effect: { suspicion: -1 }, gainCard: "旁敲侧击", log: "老人眼神一抖，说‘别问，问就是孝顺’。" },
+          { id: "hide", title: "装作没看见", body: "稳住自己。获得 1 点耐受，但错过一部分线索。", type: "event", effect: { will: 1 }, log: "你垂下眼皮，假装自己什么都不知道。" },
+          { id: "battleStart", title: "跟进紫衣女子", body: "她在祠堂外等你，言语像刀。进入第一场卡牌交锋。", type: "battle", battleId: "lady", log: "紫衣女子侧过身，让出一条不该存在的路。" }
+        ]
+      },
+      {
+        id: "ghost",
+        name: "鬼神领域",
+        note: "瓷娃娃在看，人的边界开始破裂。",
+        rule: "每回合结束若手里仍有攻击牌，惊惧 +1；因为你不敢先出手。",
+        desc: "规则变化与敌人群像，让玩家开始害怕信息本身。",
+        dog: "黑锅在你脚边绕了半圈，停下时正好挡住了某个娃娃的视线。",
+        event: "人变瓷的哭声像从很远的窑里传来。瓷娃娃们并不立刻扑上来，它们先判断你是不是‘还算个人’。",
+        choices: [
+          { id: "collect", title: "收集碎瓷", body: "拾起残片理解规则。获得 1 层‘瓷纹见识’，惊惧 +1。", type: "event", effect: { insight: 1, dread: 1 }, log: "瓷片背面刻着一行像人写的字：‘别相信完整。’" },
+          { id: "mercy", title: "安抚瓷娃娃", body: "减少敌意 2，但会损失 1 点意志。", type: "event", effect: { threat: -2, will: -1 }, log: "你把声音压到最轻，像哄一个被烧裂的小孩。" },
+          { id: "fight", title: "突破包围", body: "与瓷娃娃群作战，赢了才能带着记忆离开。", type: "battle", battleId: "porcelain", log: "瓷白的手一寸寸伸长，你知道退不回去了。" }
+        ]
+      },
+      {
+        id: "cauldron",
+        name: "药缸房",
+        note: "黑锅添柴，爷爷不再遮掩。",
+        rule: "每回合开始先承受 1 点灼伤；若理智低于 3，黑锅会主动给提示。",
+        desc: "压迫体验 + 生存判定，是 MVP 的情绪峰值。",
+        dog: "黑锅第一次看向你，不像狗在看主人，像执行端在等命令。",
+        event: "热气像一层会咬人的布蒙住你的脸。你被投入药缸，爷爷在火光里没有影子。黑锅叼来一根湿木，放在你伸手够得到的地方。",
+        choices: [
+          { id: "endure", title: "闭眼忍耐", body: "靠意志扛过去。需要意志 ≥ 4。成功则进入终局判定。", type: "ending", ending: "endure", log: "你咬住舌尖，不让自己发出像人一样的叫声。" },
+          { id: "commandDog", title: "利用黑锅", body: "赌它听懂你。需要洞察 ≥ 4。成功则反将一军。", type: "ending", ending: "dog", log: "你盯着黑锅，只说了一个字：‘火。’" },
+          { id: "burnOut", title: "放任自己异化", body: "失去一些人性，换取活下来的可能。", type: "ending", ending: "mutate", log: "你忽然理解了锅里那些东西为什么不再挣扎。" }
+        ]
+      }
+    ];
+
+    const battleDefs = {
+      lady: {
+        name: "紫衣女子",
+        hp: 18,
+        threat: 5,
+        passive: "每当你本回合第一次打出【观察】牌，她都会让你惊惧 +1。",
+        ai: [
+          { name: "冷静裁断", damage: 3, text: "她点出你的‘出身’，使你名声受挫。" },
+          { name: "规则收束", damage: 2, text: "她说‘你拥有过的，便意味着你该失去’，你失去 1 点意志。" },
+          { name: "灭口念头", damage: 4, text: "她终于撕开温和面孔，直接逼近。" }
+        ]
+      },
+      porcelain: {
+        name: "瓷娃娃群",
+        hp: 22,
+        threat: 7,
+        passive: "若你回合结束手里还有攻击牌，群体哭声让你惊惧 +1。",
+        ai: [
+          { name: "裂纹合唱", damage: 2, text: "娃娃们同时开口，像窑壁在说话。" },
+          { name: "空心拥抱", damage: 3, text: "它们抱住你的腿，想确认你是不是空的。" },
+          { name: "碎瓷回响", damage: 4, text: "一块碎片在你耳边说出你的名字。" }
+        ]
+      }
+    };
+
+    const withFallback = (pngPath, fallbackPath) => ({ src: pngPath, fallback: fallbackPath });
+
+    const portraitAssets = {
+      chenshi: withFallback("assets/generated/portrait-chenshi.webp", "assets/generated/portrait-chenshi.png"),
+      heiguo: withFallback("assets/generated/portrait-heiguo.webp", "assets/generated/portrait-heiguo.png"),
+      yeye: withFallback("assets/generated/portrait-yeye.webp", "assets/generated/portrait-yeye.png"),
+      ziyi: withFallback("assets/generated/portrait-ziyi.webp", "assets/generated/portrait-ziyi.png"),
+      porcelain: withFallback("assets/generated/portrait-porcelain.webp", "assets/generated/portrait-porcelain.png")
+    };
+
+    const sceneAssets = {
+      village: withFallback("assets/generated/scene-village.webp", "assets/generated/scene-village.png"),
+      ghost: withFallback("assets/generated/scene-ghost.webp", "assets/generated/scene-ghost.png"),
+      cauldron: withFallback("assets/generated/scene-cauldron.webp", "assets/generated/scene-cauldron.png")
+    };
+
+    const stageVisuals = {
+      village: {
+        scene: sceneAssets.village,
+        threatPortrait: portraitAssets.yeye,
+        threatName: "陈寅都",
+        threatRole: "祖辈外壳下的异常源头",
+        focusRole: "先看清爷爷，再意识到全村都在装正常"
+      },
+      ghost: {
+        scene: sceneAssets.ghost,
+        threatPortrait: portraitAssets.porcelain,
+        threatName: "瓷娃娃群",
+        threatRole: "不是纯怪物，而是规则崩坏的受害者",
+        focusRole: "你的恐惧会被场景和群像一起放大"
+      },
+      cauldron: {
+        scene: sceneAssets.cauldron,
+        threatPortrait: portraitAssets.yeye,
+        threatName: "爷爷与药缸",
+        threatRole: "炼人与亲情伪装同时压上来",
+        focusRole: "火候、蒸汽和黑锅一起把你往里逼"
+      }
+    };
+
+    const battleVisuals = {
+      lady: { scene: sceneAssets.village, enemyPortrait: portraitAssets.ziyi },
+      porcelain: { scene: sceneAssets.ghost, enemyPortrait: portraitAssets.porcelain }
+    };
+
+    function setImageSource(img, asset, alt) {
+      if (!img || !asset) return;
+      img.dataset.fallbackSrc = asset.fallback;
+      img.dataset.assetPrimary = asset.src;
+      img.src = asset.src;
+      if (alt) img.alt = alt;
+    }
+
+    const cardLibrary = [
+      { name: "观察", type: "洞察", cost: 1, text: "造成 3 点精神伤害。若目标携带规则被看穿，再追加 1 点。", action: (state) => {
+          damageEnemy(state, 3 + (state.battle.enemy.exposed ? 1 : 0));
+          state.player.insight += 1;
+          state.flags.playedObserve = true;
+          state.battle.enemy.exposed = true;
+          addBattleLog("你死死盯住对手的破绽，真相像钉子一样扎进去。");
+        }
+      },
+      { name: "闭眼忍耐", type: "耐受", cost: 1, text: "获得 5 点护持，惊惧 -1。", action: (state) => {
+          state.player.guard += 5;
+          state.player.dread = Math.max(0, state.player.dread - 1);
+          addBattleLog("你让自己不去看那一刻最该看的东西。");
+        }
+      },
+      { name: "旁敲侧击", type: "话术", cost: 1, text: "造成 2 点伤害，并让敌意 -1。", action: (state) => {
+          damageEnemy(state, 2);
+          state.battle.enemy.threat = Math.max(0, state.battle.enemy.threat - 1);
+          addBattleLog("你故意把话绕开，却把刀口递了过去。");
+        }
+      },
+      { name: "三光正气", type: "术法", cost: 2, text: "造成 6 点伤害，若洞察 ≥ 3，再抽 1 张。", action: (state) => {
+          damageEnemy(state, 6);
+          if (state.player.insight >= 3) drawCards(state, 1);
+          addBattleLog("一缕正气破开表象，短暂照亮了不该亮的东西。");
+        }
+      },
+      { name: "借火", type: "异策", cost: 1, text: "惊惧 +1，造成 5 点伤害。药缸房中改为 7 点。", action: (state) => {
+          state.player.dread += 1;
+          damageEnemy(state, state.currentStageId === "cauldron" ? 7 : 5);
+          addBattleLog("你借了不该借的火，火也记住了你。");
+        }
+      },
+      { name: "黑锅回望", type: "异策", cost: 0, text: "若惊惧 ≥ 3，恢复 2 点生命并获得 1 点行动力。", action: (state) => {
+          if (state.player.dread >= 3) {
+            state.player.hp = Math.min(state.player.maxHp, state.player.hp + 2);
+            state.battle.energy += 1;
+            addBattleLog("黑锅不叫，只往旁边让了一寸，你就知道该怎么活。");
+          } else {
+            state.player.guard += 2;
+            addBattleLog("黑锅只是看你一眼，你却先稳住了心神。");
+          }
+        }
+      }
+    ];
+
+    const initialDeck = ["观察", "观察", "闭眼忍耐", "旁敲侧击", "三光正气", "借火", "黑锅回望"];
+
+    const state = {
+      mode: "event",
+      stageIndex: 0,
+      player: {},
+      storyLog: [],
+      overlay: null,
+      battle: null,
+      currentChoices: [],
+      pendingAutoChoice: null,
+      flags: {}
+    };
+
+    const el = {
+      statsGrid: document.getElementById("stats-grid"),
+      moonText: document.getElementById("moon-text"),
+      stageMap: document.getElementById("stage-map"),
+      phaseName: document.getElementById("phase-name"),
+      phaseNote: document.getElementById("phase-note"),
+      eventTitle: document.getElementById("event-title"),
+      eventCopy: document.getElementById("event-copy"),
+      dogNote: document.getElementById("dog-note"),
+      dogFocus: document.getElementById("dog-focus"),
+      choiceGrid: document.getElementById("choice-grid"),
+      continueBtn: document.getElementById("continue-btn"),
+      restartBtn: document.getElementById("restart-btn"),
+      assetBtn: document.getElementById("asset-btn"),
+      sceneArt: document.getElementById("scene-art"),
+      sceneTag: document.getElementById("scene-tag"),
+      sceneFocusName: document.getElementById("scene-focus-name"),
+      sceneFocusRole: document.getElementById("scene-focus-role"),
+      threatArt: document.getElementById("threat-art"),
+      threatName: document.getElementById("threat-name"),
+      threatRole: document.getElementById("threat-role"),
+      ruleList: document.getElementById("rule-list"),
+      deckSummary: document.getElementById("deck-summary"),
+      storyLog: document.getElementById("story-log"),
+      battlePanel: document.getElementById("battle-panel"),
+      battleSceneArt: document.getElementById("battle-scene-art"),
+      battleEnemyArt: document.getElementById("battle-enemy-art"),
+      battleEnemyLabel: document.getElementById("battle-enemy-label"),
+      battleTurn: document.getElementById("battle-turn"),
+      enemyName: document.getElementById("enemy-name"),
+      enemyRule: document.getElementById("enemy-rule"),
+      enemyHpFill: document.getElementById("enemy-hp-fill"),
+      threatFill: document.getElementById("threat-fill"),
+      threatText: document.getElementById("threat-text"),
+      battleLog: document.getElementById("battle-log"),
+      hand: document.getElementById("hand"),
+      endTurnBtn: document.getElementById("end-turn-btn"),
+      drawBtn: document.getElementById("draw-btn"),
+      overlay: document.getElementById("overlay"),
+      overlayTitle: document.getElementById("overlay-title"),
+      overlayCopy: document.getElementById("overlay-copy"),
+      overlayClose: document.getElementById("overlay-close")
+    };
+
+    document.querySelectorAll("img[data-fallback-src]").forEach((img) => {
+      img.addEventListener("error", () => {
+        const fallback = img.dataset.fallbackSrc;
+        if (!fallback || img.dataset.fallbackApplied === "1") return;
+        img.dataset.fallbackApplied = "1";
+        img.src = fallback;
+      });
+      img.addEventListener("load", () => {
+        img.dataset.fallbackApplied = img.currentSrc.includes(".svg") ? "1" : "0";
+      });
+    });
+
+    function createPlayer() {
+      return {
+        hp: 18,
+        maxHp: 18,
+        insight: 1,
+        dread: 0,
+        will: 4,
+        suspicion: 0,
+        guard: 0,
+        deck: initialDeck.slice(),
+        discard: []
+      };
+    }
+
+    function cloneCard(name) {
+      const card = cardLibrary.find((item) => item.name === name);
+      return { ...card };
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function resetGame() {
+      state.mode = "event";
+      state.stageIndex = 0;
+      state.player = createPlayer();
+      state.storyLog = [];
+      state.overlay = null;
+      state.battle = null;
+      state.flags = {};
+      logStory("你回到黄坡村，像每次重来时一样，天还没黑透。");
+      loadStage(0);
+      render();
+    }
+
+    function loadStage(index) {
+      state.stageIndex = index;
+      state.mode = "event";
+      state.battle = null;
+      state.currentChoices = stageDefs[index].choices.map((choice) => ({ ...choice }));
+      state.flags = {};
+      logStory(`进入【${stageDefs[index].name}】。`);
+      render();
+    }
+
+    function getStage() {
+      return stageDefs[state.stageIndex];
+    }
+
+    function logStory(text) {
+      state.storyLog.unshift(text);
+      state.storyLog = state.storyLog.slice(0, 18);
+    }
+
+    function addBattleLog(text) {
+      if (!state.battle) return;
+      state.battle.log.unshift(text);
+      state.battle.log = state.battle.log.slice(0, 10);
+    }
+
+    function applyEffect(effect = {}) {
+      if (typeof effect.insight === "number") state.player.insight = Math.max(0, state.player.insight + effect.insight);
+      if (typeof effect.dread === "number") state.player.dread = Math.max(0, state.player.dread + effect.dread);
+      if (typeof effect.will === "number") state.player.will = Math.max(0, state.player.will + effect.will);
+      if (typeof effect.suspicion === "number") state.player.suspicion = Math.max(0, state.player.suspicion + effect.suspicion);
+      if (typeof effect.threat === "number" && state.battle) state.battle.enemy.threat = Math.max(0, state.battle.enemy.threat + effect.threat);
+    }
+
+    function gainCard(name) {
+      state.player.deck.push(name);
+      logStory(`你获得了新牌【${name}】。`);
+    }
+
+    function choose(choiceId) {
+      const choice = state.currentChoices.find((item) => item.id === choiceId);
+      if (!choice) return;
+      if (choice.log) logStory(choice.log);
+      if (choice.effect) applyEffect(choice.effect);
+      if (choice.gainCard) gainCard(choice.gainCard);
+
+      if (choice.type === "event") {
+        state.currentChoices = state.currentChoices.filter((item) => item.id !== choice.id);
+        if (state.currentChoices.length === 0) advanceStage();
+      } else if (choice.type === "battle") {
+        startBattle(choice.battleId);
+      } else if (choice.type === "ending") {
+        resolveEnding(choice.ending);
+      }
+      render();
+    }
+
+    function advanceStage() {
+      if (state.stageIndex >= stageDefs.length - 1) {
+        showOverlay("大道尽头", "你暂时活下来了，但你知道这不是结束。\n\n这个原型只做到‘黄坡村 -> 鬼神领域 -> 药缸’三段。真正的大道，会在后面的版本继续扩张。");
+        return;
+      }
+      loadStage(state.stageIndex + 1);
+    }
+
+    function startBattle(battleId) {
+      const def = battleDefs[battleId];
+      state.mode = "battle";
+      state.battle = {
+        id: battleId,
+        turn: 1,
+        energy: 3,
+        drawPile: shuffle(state.player.deck.map(cloneCard)),
+        discardPile: [],
+        hand: [],
+        enemy: {
+          name: def.name,
+          hp: def.hp,
+          maxHp: def.hp,
+          threat: def.threat,
+          passive: def.passive,
+          ai: def.ai.slice(),
+          exposed: false
+        },
+        log: [`你与【${def.name}】的对峙开始。`]
+      };
+      drawCards(state, 4);
+      render();
+    }
+
+    function drawCards(localState, count) {
+      const battle = localState.battle;
+      if (!battle) return;
+      for (let i = 0; i < count; i++) {
+        if (battle.drawPile.length === 0) {
+          if (battle.discardPile.length === 0) break;
+          battle.drawPile = shuffle(battle.discardPile.splice(0));
+        }
+        const card = battle.drawPile.shift();
+        if (card) battle.hand.push(card);
+      }
+    }
+
+    function damageEnemy(localState, amount) {
+      localState.battle.enemy.hp = Math.max(0, localState.battle.enemy.hp - amount);
+    }
+
+    function playCard(index) {
+      const battle = state.battle;
+      if (!battle) return;
+      const card = battle.hand[index];
+      if (!card) return;
+      if (battle.energy < card.cost) {
+        addBattleLog("行动力不够，你的手停在半空。");
+        render();
+        return;
+      }
+      battle.energy -= card.cost;
+      battle.hand.splice(index, 1);
+      battle.discardPile.push(card);
+      card.action(state);
+
+      if (battle.id === "lady" && state.flags.playedObserve) {
+        state.player.dread += 1;
+        addBattleLog("紫衣女子微微一笑：‘看懂了，就更危险。’ 惊惧 +1。");
+        state.flags.playedObserve = false;
+      }
+
+      if (battle.enemy.hp <= 0) {
+        winBattle();
+      }
+      render();
+    }
+
+    function enemyTurn() {
+      const battle = state.battle;
+      if (!battle) return;
+
+      if (getStage().id === "cauldron") {
+        state.player.hp = Math.max(0, state.player.hp - 1);
+        addBattleLog("药缸里的热浪先咬了你一口。");
+      }
+
+      if (battle.id === "porcelain" && battle.hand.some((card) => card.type === "异策")) {
+        state.player.dread += 1;
+        addBattleLog("你迟疑没出手，瓷娃娃们听见了你的怕。惊惧 +1。");
+      }
+
+      const ai = battle.enemy.ai[(battle.turn - 1) % battle.enemy.ai.length];
+      let damage = ai.damage + Math.max(0, Math.floor(battle.enemy.threat / 5));
+      if (state.player.guard > 0) {
+        const blocked = Math.min(state.player.guard, damage);
+        state.player.guard -= blocked;
+        damage -= blocked;
+      }
+      if (damage > 0) state.player.hp = Math.max(0, state.player.hp - damage);
+      state.player.will = Math.max(0, state.player.will - (ai.name === "规则收束" ? 1 : 0));
+      addBattleLog(`${battle.enemy.name}使出【${ai.name}】：${ai.text} 你失去 ${ai.damage} 点生命压力。`);
+
+      battle.turn += 1;
+      battle.energy = 3;
+      battle.enemy.exposed = false;
+      drawCards(state, 2);
+
+      if (state.player.dread >= 3 && getStage().id === "cauldron") {
+        addBattleLog("黑锅把湿木推近一点，像在提醒你：别只会忍。");
+      }
+
+      if (state.player.hp <= 0) {
+        loseBattle();
+      }
+    }
+
+    function winBattle() {
+      const battleName = state.battle.enemy.name;
+      logStory(`你熬过了【${battleName}】这一轮。规则没碎，但它裂开了。`);
+      state.player.insight += 1;
+      state.player.will += 1;
+      state.mode = "event";
+      state.battle = null;
+      state.currentChoices = [];
+      showOverlay("战斗获胜", `你击退了【${battleName}】。\n\n获得：洞察 +1，意志 +1。\n下一段规则正在前方等你。`, advanceStage);
+    }
+
+    function loseBattle() {
+      state.mode = "lost";
+      showOverlay("你没能撑住", "这一次，你没把规则看穿，反而被规则吞了。\n\n重新开局后，你会更早意识到哪些动作在诱你送死。");
+    }
+
+    function resolveEnding(kind) {
+      if (kind === "endure") {
+        if (state.player.will >= 4) {
+          showOverlay("药缸结局：忍过火候", "你撑住了，没有在火里叫出声。\n爷爷第一次对你露出一点真正的警惕。", () => {
+            state.currentChoices = [];
+            advanceStage();
+          });
+        } else {
+          showOverlay("药缸结局：忍耐失败", "你的意志不够，火候先一步把你煮散了。\n\n这说明药缸关不能只靠硬扛。");
+        }
+      }
+      if (kind === "dog") {
+        if (state.player.insight >= 4) {
+          showOverlay("药缸结局：黑锅偏向你", "黑锅听懂了。火势一偏，爷爷第一次露出真正的空门。\n你活下来了，而且知道黑锅不只是一条狗。", () => {
+            state.currentChoices = [];
+            advanceStage();
+          });
+        } else {
+          showOverlay("药缸结局：命令落空", "你以为黑锅会站到你这边，但你还没读懂它在替谁做事。");
+        }
+      }
+      if (kind === "mutate") {
+        showOverlay("药缸结局：带着裂缝活着", "你活了，但你知道自己有一部分已经不再是人。\n这是最稳的生存线，却不是最干净的路。", () => {
+          state.player.insight += 2;
+          state.player.dread += 2;
+          state.currentChoices = [];
+          advanceStage();
+        });
+      }
+    }
+
+    function showOverlay(title, copy, onClose) {
+      state.overlay = { title, copy, onClose: typeof onClose === "function" ? onClose : null };
+      render();
+    }
+
+    function closeOverlay() {
+      const handler = state.overlay && state.overlay.onClose;
+      state.overlay = null;
+      render();
+      if (handler) handler();
+    }
+
+    function renderStats() {
+      const stats = [
+        { label: "生命", value: `${state.player.hp} / ${state.player.maxHp}` },
+        { label: "洞察", value: state.player.insight },
+        { label: "惊惧", value: state.player.dread },
+        { label: "意志", value: state.player.will },
+        { label: "嫌疑", value: state.player.suspicion },
+        { label: "护持", value: state.player.guard }
+      ];
+      el.statsGrid.innerHTML = stats.map((item) => `
+        <div class="stat-card">
+          <div class="stat-label">${item.label}</div>
+          <div class="stat-value">${item.value}</div>
+        </div>
+      `).join("");
+      el.moonText.textContent = state.player.dread >= 4
+        ? "血月已经把你的呼吸记住了。任何犹豫都会被它放大。"
+        : state.player.dread >= 2
+          ? "月光开始发红，说明你已经不完全在‘正常’那一边。"
+          : "它暂时还离你远，但你知道它不会一直远。";
+    }
+
+    function renderVisualStage() {
+      const stage = getStage();
+      const visual = stageVisuals[stage.id];
+      if (!visual) return;
+      setImageSource(el.sceneArt, visual.scene, `${stage.name}场景图`);
+      el.sceneTag.textContent = `规则场景 · ${stage.name}`;
+      el.sceneFocusName.textContent = stage.name;
+      el.sceneFocusRole.textContent = visual.focusRole;
+      setImageSource(el.threatArt, visual.threatPortrait, visual.threatName);
+      el.threatName.textContent = visual.threatName;
+      el.threatRole.textContent = visual.threatRole;
+      el.dogFocus.textContent = stage.dog;
+    }
+
+    function renderStageMap() {
+      el.stageMap.innerHTML = stageDefs.map((stage, index) => `
+        <article class="stage-node ${index === state.stageIndex ? "active" : ""} ${index < state.stageIndex ? "done" : ""}" data-stage="${stage.id}">
+          <div class="stage-thumb"><img src="${sceneAssets[stage.id].src}" data-fallback-src="${sceneAssets[stage.id].fallback}" alt="${stage.name}缩略图"></div>
+          <div class="node-title">${stage.name}</div>
+          <div class="node-rule">${stage.rule}</div>
+          <div class="node-desc">${stage.desc}</div>
+        </article>
+      `).join("");
+      el.stageMap.querySelectorAll("img[data-fallback-src]").forEach((img) => {
+        img.addEventListener("error", () => {
+          const fallback = img.dataset.fallbackSrc;
+          if (!fallback || img.dataset.fallbackApplied === "1") return;
+          img.dataset.fallbackApplied = "1";
+          img.src = fallback;
+        });
+      });
+      el.stageMap.querySelectorAll(".stage-node").forEach((node, index) => {
+        node.addEventListener("click", () => {
+          const stage = stageDefs[index];
+          showOverlay(stage.name, `${stage.desc}\n\n规则：${stage.rule}\n\n黑锅提示：${stage.dog}`);
+        });
+      });
+    }
+
+    function renderEvent() {
+      const stage = getStage();
+      el.phaseName.textContent = stage.name;
+      el.phaseNote.textContent = stage.note;
+      el.eventTitle.textContent = stage.modeTitle || `场景：${stage.name}`;
+      el.eventCopy.textContent = stage.event;
+      el.dogNote.textContent = stage.dog;
+      el.choiceGrid.innerHTML = state.currentChoices.map((choice) => `
+        <article class="choice-card">
+          <h4>${choice.title}</h4>
+          <p>${choice.body}</p>
+          <div class="meta">${choice.type === "battle" ? "会触发卡牌战" : choice.type === "ending" ? "会进入药缸结局判定" : "会直接改动状态"}</div>
+          <button class="${choice.type === "battle" ? "secondary" : choice.type === "ending" ? "danger" : ""}" data-choice="${choice.id}">执行</button>
+        </article>
+      `).join("");
+      el.choiceGrid.querySelectorAll("button[data-choice]").forEach((button) => {
+        button.addEventListener("click", () => choose(button.dataset.choice));
+      });
+    }
+
+    function renderRules() {
+      const stage = getStage();
+      const cards = [
+        { title: "当前场景规则", body: stage.rule, tags: ["场景", stage.name] },
+        { title: "黑锅提示", body: stage.dog, tags: ["观察者", "隐藏变量"] },
+        { title: "MVP 设计目标", body: "让玩家感到‘世界不对劲’，并通过玩法而不是纯文案感受到这一点。", tags: ["体验", "MVP"] }
+      ];
+      if (state.battle) {
+        cards.push({ title: "战斗被动", body: state.battle.enemy.passive, tags: ["战斗", state.battle.enemy.name] });
+      }
+      el.ruleList.innerHTML = cards.map((card) => `
+        <div class="rule-card">
+          <div class="stat-value" style="font-size:1.02rem;">${card.title}</div>
+          <p class="event-copy" style="margin:10px 0 12px;">${card.body}</p>
+          <div>${card.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderDeckSummary() {
+      const counts = {};
+      state.player.deck.forEach((name) => {
+        counts[name] = (counts[name] || 0) + 1;
+      });
+      el.deckSummary.innerHTML = Object.entries(counts).map(([name, count]) => `
+        <div class="rule-card">
+          <div class="row">
+            <strong>${name}</strong>
+            <span class="tag">x${count}</span>
+          </div>
+          <div class="stat-label">${cloneCard(name).text}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderBattle() {
+      const battle = state.battle;
+      const active = state.mode === "battle" && battle;
+      el.battlePanel.classList.toggle("active", Boolean(active));
+      if (!active) return;
+
+      const visual = battleVisuals[battle.id];
+      if (visual) {
+        setImageSource(el.battleSceneArt, visual.scene, `${battle.enemy.name}战斗场景`);
+        setImageSource(el.battleEnemyArt, visual.enemyPortrait, battle.enemy.name);
+      }
+      el.battleEnemyLabel.textContent = battle.enemy.name;
+      el.enemyName.textContent = battle.enemy.name;
+      el.enemyRule.textContent = battle.enemy.passive;
+      el.enemyHpFill.style.width = `${(battle.enemy.hp / battle.enemy.maxHp) * 100}%`;
+      el.threatFill.style.width = `${Math.min(100, battle.enemy.threat * 10)}%`;
+      el.threatText.textContent = battle.enemy.threat >= 8
+        ? "敌意几乎沸腾，再拖就会被反扑。"
+        : battle.enemy.threat >= 5
+          ? "敌意正在升高，留意规则惩罚。"
+          : "敌意低，你还有调度空间。";
+      el.battleTurn.textContent = `${battle.turn} / ${battle.energy}`;
+      el.battleLog.innerHTML = battle.log.map((item) => `<li>${item}</li>`).join("");
+
+      el.hand.innerHTML = battle.hand.map((card, index) => `
+        <article class="card">
+          <div class="card-title">${card.name}</div>
+          <div class="card-type">${card.type} · 消耗 ${card.cost}</div>
+          <div class="card-body">${card.text}</div>
+          <div class="card-footer">
+            <span>${battle.energy >= card.cost ? "可打出" : "行动力不足"}</span>
+            <button data-card-index="${index}" class="${battle.energy >= card.cost ? "" : "ghost"}">使用</button>
+          </div>
+        </article>
+      `).join("");
+      el.hand.querySelectorAll("button[data-card-index]").forEach((button) => {
+        button.addEventListener("click", () => playCard(Number(button.dataset.cardIndex)));
+      });
+    }
+
+    function renderStoryLog() {
+      el.storyLog.innerHTML = state.storyLog.map((item) => `<li>${item}</li>`).join("");
+    }
+
+    function renderOverlay() {
+      const active = Boolean(state.overlay);
+      el.overlay.classList.toggle("active", active);
+      if (!active) return;
+      el.overlayTitle.textContent = state.overlay.title;
+      el.overlayCopy.textContent = state.overlay.copy;
+    }
+
+    function render() {
+      renderStats();
+      renderVisualStage();
+      renderStageMap();
+      renderEvent();
+      renderRules();
+      renderDeckSummary();
+      renderBattle();
+      renderStoryLog();
+      renderOverlay();
+      renderGameToText();
+    }
+
+    function renderGameToText() {
+      const payload = {
+        note: "origin=(左上), x向右, y向下；这是状态文本，不是像素画面。",
+        mode: state.mode,
+        stage: getStage().id,
+        player: {
+          hp: state.player.hp,
+          maxHp: state.player.maxHp,
+          insight: state.player.insight,
+          dread: state.player.dread,
+          will: state.player.will,
+          suspicion: state.player.suspicion,
+          guard: state.player.guard
+        },
+        stageChoices: state.currentChoices.map((choice) => ({ id: choice.id, title: choice.title, type: choice.type })),
+        battle: state.battle ? {
+          enemy: {
+            name: state.battle.enemy.name,
+            hp: state.battle.enemy.hp,
+            maxHp: state.battle.enemy.maxHp,
+            threat: state.battle.enemy.threat
+          },
+          turn: state.battle.turn,
+          energy: state.battle.energy,
+          hand: state.battle.hand.map((card) => ({ name: card.name, type: card.type, cost: card.cost })),
+          log: state.battle.log.slice(0, 4)
+        } : null,
+        overlay: state.overlay ? { title: state.overlay.title } : null
+      };
+      const text = JSON.stringify(payload);
+      document.getElementById("render-root").textContent = text;
+      window.render_game_to_text = () => text;
+      return text;
+    }
+
+    window.advanceTime = (ms = 1000 / 60) => {
+      const steps = Math.max(1, Math.round(ms / (1000 / 60)));
+      for (let i = 0; i < steps; i++) {
+        if (state.pendingAutoChoice) {
+          const choice = state.pendingAutoChoice;
+          state.pendingAutoChoice = null;
+          choose(choice);
+        }
+      }
+      render();
+    };
+
+    el.continueBtn.addEventListener("click", () => {
+      if (state.mode === "battle") {
+        enemyTurn();
+      } else if (state.currentChoices.length > 0) {
+        choose(state.currentChoices[0].id);
+      } else {
+        advanceStage();
+      }
+      render();
+    });
+    el.restartBtn.addEventListener("click", resetGame);
+    el.assetBtn.addEventListener("click", () => {
+      showOverlay("PPT 资产链说明", "本原型的图形源文件由 `tools/generate-art-pack.js` 通过 PptxGenJS 生成，输出在 `output/daodaozhishang-asset-pack.pptx`。\n\n当前前端先用同一套版式语言直接实现 UI，后续可以把 PPT 资产导出成 PNG/SVG 再替换运行时素材。");
+    });
+    el.endTurnBtn.addEventListener("click", () => {
+      if (state.mode === "battle") {
+        enemyTurn();
+        render();
+      }
+    });
+    el.drawBtn.addEventListener("click", () => {
+      if (state.mode === "battle") {
+        drawCards(state, 1);
+        render();
+      }
+    });
+    el.overlayClose.addEventListener("click", closeOverlay);
+
+    resetGame();
+  </script>
+</body>
+</html>
