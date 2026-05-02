@@ -95,6 +95,15 @@
       gap: 16px;
       min-height: 0;
     }
+    .main-grid.battle-mode {
+      grid-template-columns: 280px minmax(0, 1fr);
+    }
+    .main-grid.battle-mode #side-panel {
+      display: none;
+    }
+    .main-grid.battle-mode .battle-fold {
+      display: none;
+    }
     .panel {
       padding: 18px;
     }
@@ -425,7 +434,7 @@
     }
     .battle-panel {
       display: none;
-      grid-template-columns: minmax(0, 1fr) 230px;
+      grid-template-columns: minmax(0, 1fr) 280px;
       gap: 14px;
       margin-top: 16px;
     }
@@ -439,15 +448,53 @@
     .enemy-card {
       margin-bottom: 14px;
     }
+    .battle-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .battle-head h4 {
+      margin: 6px 0 0;
+      font-size: 1.18rem;
+      color: #f9e9c8;
+      letter-spacing: 0.06em;
+    }
+    .battle-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.88rem;
+    }
+    .battle-intent {
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(193, 61, 46, 0.28);
+      background: linear-gradient(180deg, rgba(90, 34, 28, 0.8), rgba(31, 14, 12, 0.95));
+    }
+    .battle-intent strong {
+      display: block;
+      color: #ffd8b5;
+      font-size: 0.94rem;
+      margin-bottom: 6px;
+    }
+    .battle-intent span {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+      display: block;
+    }
     .battle-tableau {
       position: relative;
-      min-height: 210px;
+      min-height: 320px;
       margin-bottom: 14px;
     }
     .battle-scene-art {
       width: 100%;
       height: 100%;
-      min-height: 210px;
+      min-height: 320px;
       object-fit: cover;
       display: block;
       filter: saturate(0.94);
@@ -467,19 +514,132 @@
       flex-direction: column;
       gap: 8px;
       align-items: center;
+      transition: transform 0.2s ease, filter 0.2s ease;
     }
     .combatant img {
-      width: 116px;
-      height: 154px;
+      width: 136px;
+      height: 186px;
       object-fit: cover;
       border-radius: 18px;
       border: 1px solid rgba(227, 197, 147, 0.18);
       box-shadow: 0 18px 32px rgba(0,0,0,0.3);
       background: rgba(0,0,0,0.22);
     }
+    .combatant.is-acting {
+      transform: translateY(-6px) scale(1.02);
+      filter: saturate(1.08);
+    }
+    .combatant.is-hit {
+      transform: translateY(3px) scale(0.98);
+      filter: saturate(0.72) brightness(1.08);
+    }
     .combatant span {
       font-size: 0.8rem;
       color: var(--ghost);
+      letter-spacing: 0.08em;
+    }
+    .combatant-status {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      max-width: 170px;
+    }
+    .status-pill {
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(227, 197, 147, 0.18);
+      background: rgba(9, 8, 8, 0.44);
+      color: var(--ghost);
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+    .battle-feedback {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      padding: 14px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(227, 197, 147, 0.26);
+      background: rgba(8, 7, 7, 0.72);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
+      color: #f9e9c8;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      text-align: center;
+      max-width: min(78%, 440px);
+    }
+    .battle-feedback.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .battle-feedback.safe {
+      border-color: rgba(122, 176, 138, 0.36);
+      color: #d5f2de;
+    }
+    .battle-feedback.warning {
+      border-color: rgba(193, 61, 46, 0.42);
+      color: #ffd7c7;
+    }
+    .battle-status-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .hero-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(227, 197, 147, 0.18);
+      background: linear-gradient(180deg, rgba(60, 42, 31, 0.82), rgba(26, 18, 13, 0.95));
+    }
+    .hero-card .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .battle-subgrid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .pile-grid, .relic-rack {
+      display: grid;
+      gap: 10px;
+    }
+    .pile-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .pile-card, .relic-card {
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(227, 197, 147, 0.16);
+      background: rgba(255,255,255,0.04);
+    }
+    .pile-card strong, .relic-card strong {
+      display: block;
+      color: #f7dfb2;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+    .pile-card span, .relic-card span {
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.82rem;
+      display: block;
+    }
+    .relic-rack {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .battle-section-label {
+      margin: 0 0 10px;
+      color: #f7dfb2;
+      font-size: 0.92rem;
       letter-spacing: 0.08em;
     }
     .battle-log {
@@ -508,6 +668,32 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(227, 197, 147, 0.36);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.22);
+    }
+    .card.card-observe {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, rgba(33, 60, 66, 0.95), rgba(16, 28, 31, 0.97));
+    }
+    .card.card-scheme {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, rgba(70, 42, 27, 0.95), rgba(29, 18, 12, 0.97));
+    }
+    .card.card-survive {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, rgba(42, 63, 45, 0.95), rgba(17, 28, 19, 0.97));
+    }
+    .card.card-ritual {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, rgba(71, 34, 54, 0.95), rgba(30, 15, 24, 0.97));
     }
     .card-title {
       font-size: 1rem;
@@ -612,6 +798,16 @@
       justify-content: flex-end;
       margin-top: 20px;
     }
+    .hidden-in-battle {
+      transition: opacity 0.18s ease, max-height 0.18s ease, margin 0.18s ease;
+    }
+    .event-panel.battle-focus .hidden-in-battle {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      margin: 0;
+      pointer-events: none;
+    }
     .sr-note {
       position: absolute;
       left: -9999px;
@@ -651,7 +847,7 @@
       </div>
     </header>
 
-    <main class="main-grid">
+    <main id="main-grid" class="main-grid">
       <section class="panel">
         <h2>陈实状态</h2>
         <div class="stats-grid" id="stats-grid"></div>
@@ -665,15 +861,15 @@
       </section>
 
       <section class="center-panel">
-        <div class="phase-banner">
+        <div class="phase-banner hidden-in-battle battle-fold">
           <strong id="phase-name">黄坡村</strong>
           <span id="phase-note">先学会相信自己的眼睛，再学会怀疑自己的眼睛。</span>
         </div>
 
-        <div class="stage-map" id="stage-map"></div>
+        <div class="stage-map hidden-in-battle battle-fold" id="stage-map"></div>
 
-        <section class="event-panel">
-          <div class="visual-stage">
+        <section id="event-panel" class="event-panel">
+          <div class="visual-stage hidden-in-battle">
             <div class="scene-frame">
               <img id="scene-art" class="scene-art" src="assets/generated/scene-village.webp" data-fallback-src="assets/generated/scene-village.png" alt="场景图" />
               <div class="scene-vignette"></div>
@@ -704,7 +900,7 @@
             </div>
           </div>
 
-          <div class="event-head">
+          <div class="event-head hidden-in-battle">
             <div>
               <h3 id="event-title">开局：灶房前的火</h3>
               <p id="event-copy" class="event-copy"></p>
@@ -715,28 +911,72 @@
             </aside>
           </div>
 
-          <div id="choice-grid" class="choice-grid"></div>
+          <div id="choice-grid" class="choice-grid hidden-in-battle"></div>
 
           <section id="battle-panel" class="battle-panel">
             <div class="battle-main">
+              <div class="battle-head">
+                <div>
+                  <span class="scene-tag">肉鸽卡战 · 正面交锋</span>
+                  <h4 id="battle-title">祠堂前的第一道缝</h4>
+                  <p id="battle-subtitle">这一回合要看懂对方想做什么，再决定你愿意让哪条规则先裂。</p>
+                </div>
+                <div class="battle-intent">
+                  <strong id="enemy-intent-name">敌方意图：冷静裁断</strong>
+                  <span id="enemy-intent-text">预计 4 点生命压力，并伴随名声或意志打击。</span>
+                </div>
+              </div>
               <div class="battle-tableau">
                 <img id="battle-scene-art" class="battle-scene-art" src="assets/generated/scene-village.webp" data-fallback-src="assets/generated/scene-village.png" alt="战斗场景" />
                 <div class="combatants">
-                  <div class="combatant">
+                  <div class="combatant" id="battle-hero">
                     <img id="battle-hero-art" src="assets/generated/portrait-chenshi.webp" data-fallback-src="assets/generated/portrait-chenshi.png" alt="陈实战斗立绘" />
                     <span>陈实</span>
+                    <div id="hero-status" class="combatant-status"></div>
                   </div>
-                  <div class="combatant">
+                  <div class="combatant" id="battle-enemy">
                     <img id="battle-enemy-art" src="assets/generated/portrait-ziyi.webp" data-fallback-src="assets/generated/portrait-ziyi.png" alt="敌人立绘" />
                     <span id="battle-enemy-label">紫衣女子</span>
+                    <div id="enemy-status" class="combatant-status"></div>
                   </div>
                 </div>
+                <div id="battle-feedback" class="battle-feedback" aria-live="polite"></div>
               </div>
-              <div class="enemy-card">
-                <div class="stat-label">当前对手</div>
-                <div class="stat-value" id="enemy-name">紫衣女子</div>
-                <div class="meter" aria-hidden="true"><div class="meter-fill" id="enemy-hp-fill"></div></div>
-                <div class="card-body" id="enemy-rule"></div>
+              <div class="battle-status-grid">
+                <div class="enemy-card">
+                  <div class="stat-label">当前对手</div>
+                  <div class="stat-value" id="enemy-name">紫衣女子</div>
+                  <div class="meter" aria-hidden="true"><div class="meter-fill" id="enemy-hp-fill"></div></div>
+                  <div class="card-body" id="enemy-rule"></div>
+                </div>
+                <div class="hero-card">
+                  <div class="stat-label">陈实当前状态</div>
+                  <div class="stat-value" id="hero-battle-state">18 / 18 生命，0 惊惧</div>
+                  <div class="meta-line" id="hero-battle-tags"></div>
+                </div>
+              </div>
+              <div class="battle-subgrid">
+                <div>
+                  <h5 class="battle-section-label">牌堆信息</h5>
+                  <div class="pile-grid">
+                    <div class="pile-card">
+                      <strong>抽牌堆</strong>
+                      <span id="draw-pile-count">0 张</span>
+                    </div>
+                    <div class="pile-card">
+                      <strong>弃牌堆</strong>
+                      <span id="discard-pile-count">0 张</span>
+                    </div>
+                    <div class="pile-card">
+                      <strong>本回合重点</strong>
+                      <span id="battle-plan-text">先拆规则，再打伤害。</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h5 class="battle-section-label">法器 / 邪物</h5>
+                  <div class="relic-rack" id="battle-relics"></div>
+                </div>
               </div>
               <div class="stat-label">手牌</div>
               <div class="hand" id="hand"></div>
@@ -752,6 +992,11 @@
                 <div class="meta" id="threat-text">敌意低，你还有余地。</div>
               </div>
               <div class="stat-card">
+                <div class="stat-label">敌方下一步</div>
+                <div class="stat-value" id="intent-damage">4 点压迫</div>
+                <div class="meta" id="intent-brief">会带额外规则惩罚。</div>
+              </div>
+              <div class="stat-card">
                 <div class="stat-label">战斗记录</div>
                 <ol class="battle-log" id="battle-log"></ol>
               </div>
@@ -762,7 +1007,7 @@
             </div>
           </section>
 
-          <div class="actions">
+          <div class="actions hidden-in-battle">
             <button id="continue-btn">推进剧情</button>
             <button class="secondary" id="restart-btn">重新开局</button>
             <button class="ghost" id="asset-btn">查看 PPT 资产说明</button>
@@ -770,7 +1015,7 @@
         </section>
       </section>
 
-      <aside class="panel">
+      <aside id="side-panel" class="panel">
         <h2>规则裂缝</h2>
         <div class="sidebar-list" id="rule-list"></div>
         <h2 style="margin-top:22px;">牌组概览</h2>
@@ -913,6 +1158,35 @@
       porcelain: { scene: sceneAssets.ghost, enemyPortrait: portraitAssets.porcelain }
     };
 
+    const relicDefs = {
+      emberPot: {
+        name: "黑锅余温",
+        text: "每场战斗开始时获得 2 点护持。",
+        onBattleStart: (state) => {
+          state.player.guard += 2;
+          addBattleLog("【黑锅余温】先替你挡住了第一口风。护持 +2。");
+        }
+      },
+      ancestralAsh: {
+        name: "祖祠灰烬",
+        text: "每场战斗第一次打出【观察】时，额外造成 1 点伤害。",
+        onObserve: (state) => {
+          damageEnemy(state, 1);
+          addBattleLog("【祖祠灰烬】贴着真相烧了一下。额外伤害 +1。");
+        }
+      },
+      porcelainMark: {
+        name: "碎瓷印记",
+        text: "若本回合带着护持吃伤害，额外格挡 1 点。",
+        onEnemyAttack: (state, payload) => {
+          if (state.player.guard > 0 && payload.damage > 0) {
+            payload.damage = Math.max(0, payload.damage - 1);
+            payload.extraBlock = (payload.extraBlock || 0) + 1;
+          }
+        }
+      }
+    };
+
     function setImageSource(img, asset, alt) {
       if (!img || !asset) return;
       img.dataset.fallbackSrc = asset.fallback;
@@ -950,7 +1224,7 @@
       },
       { name: "借火", type: "异策", cost: 1, text: "惊惧 +1，造成 5 点伤害。药缸房中改为 7 点。", action: (state) => {
           state.player.dread += 1;
-          damageEnemy(state, state.currentStageId === "cauldron" ? 7 : 5);
+          damageEnemy(state, getStage().id === "cauldron" ? 7 : 5);
           addBattleLog("你借了不该借的火，火也记住了你。");
         }
       },
@@ -982,6 +1256,7 @@
     };
 
     const el = {
+      mainGrid: document.getElementById("main-grid"),
       statsGrid: document.getElementById("stats-grid"),
       moonText: document.getElementById("moon-text"),
       stageMap: document.getElementById("stage-map"),
@@ -1005,8 +1280,18 @@
       ruleList: document.getElementById("rule-list"),
       deckSummary: document.getElementById("deck-summary"),
       storyLog: document.getElementById("story-log"),
+      eventPanel: document.getElementById("event-panel"),
       battlePanel: document.getElementById("battle-panel"),
       battleSceneArt: document.getElementById("battle-scene-art"),
+      battleTitle: document.getElementById("battle-title"),
+      battleSubtitle: document.getElementById("battle-subtitle"),
+      enemyIntentName: document.getElementById("enemy-intent-name"),
+      enemyIntentText: document.getElementById("enemy-intent-text"),
+      heroStatus: document.getElementById("hero-status"),
+      enemyStatus: document.getElementById("enemy-status"),
+      battleFeedback: document.getElementById("battle-feedback"),
+      battleHero: document.getElementById("battle-hero"),
+      battleEnemy: document.getElementById("battle-enemy"),
       battleEnemyArt: document.getElementById("battle-enemy-art"),
       battleEnemyLabel: document.getElementById("battle-enemy-label"),
       battleTurn: document.getElementById("battle-turn"),
@@ -1015,6 +1300,14 @@
       enemyHpFill: document.getElementById("enemy-hp-fill"),
       threatFill: document.getElementById("threat-fill"),
       threatText: document.getElementById("threat-text"),
+      heroBattleState: document.getElementById("hero-battle-state"),
+      heroBattleTags: document.getElementById("hero-battle-tags"),
+      drawPileCount: document.getElementById("draw-pile-count"),
+      discardPileCount: document.getElementById("discard-pile-count"),
+      battlePlanText: document.getElementById("battle-plan-text"),
+      battleRelics: document.getElementById("battle-relics"),
+      intentDamage: document.getElementById("intent-damage"),
+      intentBrief: document.getElementById("intent-brief"),
       battleLog: document.getElementById("battle-log"),
       hand: document.getElementById("hand"),
       endTurnBtn: document.getElementById("end-turn-btn"),
@@ -1047,7 +1340,8 @@
         suspicion: 0,
         guard: 0,
         deck: initialDeck.slice(),
-        discard: []
+        discard: [],
+        relics: ["emberPot", "ancestralAsh"]
       };
     }
 
@@ -1094,6 +1388,63 @@
     function logStory(text) {
       state.storyLog.unshift(text);
       state.storyLog = state.storyLog.slice(0, 18);
+    }
+
+    function updateFeedback(message, tone = "warning") {
+      if (!el.battleFeedback) return;
+      el.battleFeedback.textContent = message;
+      el.battleFeedback.className = `battle-feedback ${tone} active`;
+      clearTimeout(updateFeedback.timeoutId);
+      updateFeedback.timeoutId = setTimeout(() => {
+        el.battleFeedback.className = `battle-feedback ${tone}`;
+      }, 900);
+    }
+
+    function pulseCombatant(target, kind) {
+      const node = target === "hero" ? el.battleHero : el.battleEnemy;
+      if (!node) return;
+      node.classList.remove("is-acting", "is-hit");
+      node.classList.add(kind);
+      clearTimeout(pulseCombatant[`${target}_${kind}`]);
+      pulseCombatant[`${target}_${kind}`] = setTimeout(() => {
+        node.classList.remove(kind);
+      }, 320);
+    }
+
+    function getEnemyIntent(battle) {
+      if (!battle) return null;
+      const ai = battle.enemy.ai[(battle.turn - 1) % battle.enemy.ai.length];
+      return {
+        name: ai.name,
+        text: ai.text,
+        pressure: ai.damage + Math.max(0, Math.floor(battle.enemy.threat / 5))
+      };
+    }
+
+    function getCardTone(type) {
+      if (type === "洞察") return "card-observe";
+      if (type === "耐受") return "card-survive";
+      if (type === "术法" || type === "异策") return "card-ritual";
+      return "card-scheme";
+    }
+
+    function getBattlePlanText() {
+      if (!state.battle) return "先把规则读懂。";
+      if (state.battle.enemy.threat >= 7) return "敌意太高，优先降压或补护持。";
+      if (state.player.dread >= 3) return "惊惧偏高，别只顾伤害。";
+      if (state.player.insight >= 3) return "洞察已成型，可以压高费牌收益。";
+      return "先拆规则，再打核心伤害。";
+    }
+
+    function getRelic(id) {
+      return relicDefs[id];
+    }
+
+    function gainRelic(id) {
+      if (!state.player.relics.includes(id) && relicDefs[id]) {
+        state.player.relics.push(id);
+        logStory(`你获得了法器【${relicDefs[id].name}】。`);
+      }
     }
 
     function addBattleLog(text) {
@@ -1162,7 +1513,12 @@
         },
         log: [`你与【${def.name}】的对峙开始。`]
       };
+      state.flags.observeRelicUsed = false;
       drawCards(state, 4);
+      state.player.relics.map(getRelic).filter(Boolean).forEach((relic) => {
+        if (typeof relic.onBattleStart === "function") relic.onBattleStart(state);
+      });
+      updateFeedback(`【${def.name}】盯上了你。先看意图，再出手。`, "warning");
       render();
     }
 
@@ -1196,11 +1552,21 @@
       battle.energy -= card.cost;
       battle.hand.splice(index, 1);
       battle.discardPile.push(card);
+      pulseCombatant("hero", "is-acting");
       card.action(state);
+      if (card.name === "观察" && state.player.relics.includes("ancestralAsh") && !state.flags.observeRelicUsed) {
+        const relic = getRelic("ancestralAsh");
+        if (relic && typeof relic.onObserve === "function") {
+          relic.onObserve(state);
+          state.flags.observeRelicUsed = true;
+        }
+      }
+      updateFeedback(`你打出了【${card.name}】。`, "safe");
 
       if (battle.id === "lady" && state.flags.playedObserve) {
         state.player.dread += 1;
         addBattleLog("紫衣女子微微一笑：‘看懂了，就更危险。’ 惊惧 +1。");
+        updateFeedback("看穿规则的瞬间，你也被规则看见了。", "warning");
         state.flags.playedObserve = false;
       }
 
@@ -1225,7 +1591,14 @@
       }
 
       const ai = battle.enemy.ai[(battle.turn - 1) % battle.enemy.ai.length];
-      let damage = ai.damage + Math.max(0, Math.floor(battle.enemy.threat / 5));
+      const attack = {
+        damage: ai.damage + Math.max(0, Math.floor(battle.enemy.threat / 5)),
+        extraBlock: 0
+      };
+      state.player.relics.map(getRelic).filter(Boolean).forEach((relic) => {
+        if (typeof relic.onEnemyAttack === "function") relic.onEnemyAttack(state, attack);
+      });
+      let damage = attack.damage;
       if (state.player.guard > 0) {
         const blocked = Math.min(state.player.guard, damage);
         state.player.guard -= blocked;
@@ -1233,7 +1606,10 @@
       }
       if (damage > 0) state.player.hp = Math.max(0, state.player.hp - damage);
       state.player.will = Math.max(0, state.player.will - (ai.name === "规则收束" ? 1 : 0));
-      addBattleLog(`${battle.enemy.name}使出【${ai.name}】：${ai.text} 你失去 ${ai.damage} 点生命压力。`);
+      pulseCombatant("enemy", "is-acting");
+      if (damage > 0) pulseCombatant("hero", "is-hit");
+      addBattleLog(`${battle.enemy.name}使出【${ai.name}】：${ai.text} 你失去 ${damage} 点生命压力。`);
+      updateFeedback(`【${ai.name}】落下，压迫 ${damage}${attack.extraBlock ? `，你的法器替你挡掉了 ${attack.extraBlock}` : ""}。`, damage > 0 ? "warning" : "safe");
 
       battle.turn += 1;
       battle.energy = 3;
@@ -1251,9 +1627,11 @@
 
     function winBattle() {
       const battleName = state.battle.enemy.name;
+      const battleId = state.battle.id;
       logStory(`你熬过了【${battleName}】这一轮。规则没碎，但它裂开了。`);
       state.player.insight += 1;
       state.player.will += 1;
+      if (battleId === "lady") gainRelic("porcelainMark");
       state.mode = "event";
       state.battle = null;
       state.currentChoices = [];
@@ -1427,14 +1805,21 @@
     function renderBattle() {
       const battle = state.battle;
       const active = state.mode === "battle" && battle;
+      el.mainGrid.classList.toggle("battle-mode", Boolean(active));
       el.battlePanel.classList.toggle("active", Boolean(active));
+      el.eventPanel.classList.toggle("battle-focus", Boolean(active));
       if (!active) return;
 
       const visual = battleVisuals[battle.id];
+      const intent = getEnemyIntent(battle);
       if (visual) {
         setImageSource(el.battleSceneArt, visual.scene, `${battle.enemy.name}战斗场景`);
         setImageSource(el.battleEnemyArt, visual.enemyPortrait, battle.enemy.name);
       }
+      el.battleTitle.textContent = battle.id === "lady" ? "祠堂外的试探战" : "窑场边缘的群体围猎";
+      el.battleSubtitle.textContent = battle.id === "lady"
+        ? "她先用语言试刀，再看你敢不敢正眼看她。"
+        : "每拖一轮，群像规则都会把你往裂开的那边推。";
       el.battleEnemyLabel.textContent = battle.enemy.name;
       el.enemyName.textContent = battle.enemy.name;
       el.enemyRule.textContent = battle.enemy.passive;
@@ -1446,10 +1831,38 @@
           ? "敌意正在升高，留意规则惩罚。"
           : "敌意低，你还有调度空间。";
       el.battleTurn.textContent = `${battle.turn} / ${battle.energy}`;
+      el.enemyIntentName.textContent = `敌方意图：${intent.name}`;
+      el.enemyIntentText.textContent = `预计 ${intent.pressure} 点生命压力。${intent.text}`;
+      el.intentDamage.textContent = `${intent.pressure} 点压迫`;
+      el.intentBrief.textContent = intent.text;
+      el.heroBattleState.textContent = `${state.player.hp} / ${state.player.maxHp} 生命，${state.player.dread} 惊惧，${state.player.guard} 护持`;
+      el.heroBattleTags.innerHTML = [
+        `洞察 ${state.player.insight}`,
+        `意志 ${state.player.will}`,
+        `名声 ${state.player.suspicion}`,
+        `行动力 ${battle.energy}`
+      ].map((text) => `<span class="status-pill">${text}</span>`).join("");
+      el.heroStatus.innerHTML = [
+        `生命 ${state.player.hp}`,
+        `护持 ${state.player.guard}`,
+        `惊惧 ${state.player.dread}`
+      ].map((text) => `<span class="status-pill">${text}</span>`).join("");
+      el.enemyStatus.innerHTML = [
+        `血量 ${battle.enemy.hp}/${battle.enemy.maxHp}`,
+        `敌意 ${battle.enemy.threat}`,
+        battle.enemy.exposed ? "已看穿" : "未看穿"
+      ].map((text) => `<span class="status-pill">${text}</span>`).join("");
+      el.drawPileCount.textContent = `${battle.drawPile.length} 张`;
+      el.discardPileCount.textContent = `${battle.discardPile.length} 张`;
+      el.battlePlanText.textContent = getBattlePlanText();
+      el.battleRelics.innerHTML = state.player.relics.map((id) => {
+        const relic = getRelic(id);
+        return relic ? `<div class="relic-card"><strong>${relic.name}</strong><span>${relic.text}</span></div>` : "";
+      }).join("");
       el.battleLog.innerHTML = battle.log.map((item) => `<li>${item}</li>`).join("");
 
       el.hand.innerHTML = battle.hand.map((card, index) => `
-        <article class="card">
+        <article class="card ${getCardTone(card.type)}">
           <div class="card-title">${card.name}</div>
           <div class="card-type">${card.type} · 消耗 ${card.cost}</div>
           <div class="card-body">${card.text}</div>
@@ -1511,8 +1924,12 @@
             maxHp: state.battle.enemy.maxHp,
             threat: state.battle.enemy.threat
           },
+          intent: getEnemyIntent(state.battle),
           turn: state.battle.turn,
           energy: state.battle.energy,
+          drawPile: state.battle.drawPile.length,
+          discardPile: state.battle.discardPile.length,
+          relics: state.player.relics.map((id) => relicDefs[id]?.name || id),
           hand: state.battle.hand.map((card) => ({ name: card.name, type: card.type, cost: card.cost })),
           log: state.battle.log.slice(0, 4)
         } : null,

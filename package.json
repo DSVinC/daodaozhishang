@@ -1,0 +1,13 @@
+{
+  "name": "daodaozhishang",
+  "private": true,
+  "version": "0.1.0",
+  "type": "commonjs",
+  "scripts": {
+    "art": "node tools/generate-art-pack.js",
+    "serve": "python3 -m http.server 4321"
+  },
+  "dependencies": {
+    "playwright": "^1.59.1"
+  }
+}
